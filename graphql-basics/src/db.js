@@ -34,13 +34,13 @@ const posts = [{
   title: 'this is a dummy post title (second)', 
   body: 'this is a dummy post body (second)',
   published: false,
-  author: '1',
+  author: '2',
 }, {
   id: '3',
   title: 'this is a dummy post title (third)', 
   body: 'this is a dummy post body (third)',
   published: false,
-  author: '1',
+  author: '3',
 }];
 
 // demo comment data
