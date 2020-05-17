@@ -30,13 +30,13 @@ const Mutation = {
   createPost: (parent, args, ctx, info) => {
     const { data } = args;
 
-    const userExists = users.some(u => u.id === data.author);
+    const userExists = ctx.users.some(u => u.id === data.author);
 
     if (!userExists) throw new Error('User not found');
 
     const post = { id: uuidv4(), ...data };
 
-    posts.push(post);
+    ctx.posts.push(post);
     return post;
   },
   deleteComment: (parent, args, ctx, info) => {
