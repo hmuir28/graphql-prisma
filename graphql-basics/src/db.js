@@ -24,19 +24,19 @@ const users = [{
 
 // Demo post data
 const posts = [{
-  id: '1',
+  id: '10',
   title: 'this is a dummy post title (first)', 
   body: 'this is a dummy post body (first)',
   published: true,
   author: '1',
 }, {
-  id: '2',
+  id: '11',
   title: 'this is a dummy post title (second)', 
   body: 'this is a dummy post body (second)',
   published: false,
   author: '2',
 }, {
-  id: '3',
+  id: '12',
   title: 'this is a dummy post title (third)', 
   body: 'this is a dummy post body (third)',
   published: false,

@@ -18,6 +18,14 @@ type Mutation {
   deletePost(id: ID!): Post!
 }
 
+type Subscription {
+  comment(postId: String!): Comment!
+}
+
+type Subscription {
+  post: PostSubscriptionPayload
+}
+
 input createUser {
   name: String!
   email: String!
@@ -76,4 +84,9 @@ type User {
   age: Int!
   posts: [Post!]!
   comments: [Comment!]!
+}
+
+type PostSubscriptionPayload {
+  mutation: String!
+  data: Post!
 }

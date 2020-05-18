@@ -1,16 +1,17 @@
 import uuidv4 from 'uuid/v4';
 
 const Mutation = {
-  createComment: (parent, args, ctx, info) => {
+  createComment: (parent, args, { comments, users, posts, pubsub }, info) => {
     const { data } = args;
-    const userExists = ctx.users.some(u => u.id === data.author);
-    const postExists = ctx.posts.some(u => u.id === data.post);
+    const userExists = users.some(u => u.id === data.author);
+    const postExists = posts.some(u => u.id === data.post);
 
     if (!userExists || !postExists) throw new Error('Operation invalid!');
 
     const comment = { id: uuidv4(), ...data };
 
-    ctx.comments.push(comment);
+    comments.push(comment);
+    pubsub.publish(`comment ${data.post}`, { comment });
     return comment;
   },
   createUser: (parent, args, ctx, info) => {
@@ -27,16 +28,24 @@ const Mutation = {
     ctx.users.push(user);
     return user;
   },
-  createPost: (parent, args, ctx, info) => {
+  createPost: (parent, args, { users, posts, pubsub }, info) => {
     const { data } = args;
 
-    const userExists = ctx.users.some(u => u.id === data.author);
+    const userExists = users.some(u => u.id === data.author);
 
     if (!userExists) throw new Error('User not found');
 
     const post = { id: uuidv4(), ...data };
 
-    ctx.posts.push(post);
+    posts.push(post);
+
+    if (post.published) pubsub.publish('post', {
+      post: {
+        mutation: 'CREATED',
+        data: post,
+      }
+    });
+
     return post;
   },
   updateUser: (parent, args, ctx, info) => {
@@ -60,14 +69,18 @@ const Mutation = {
   },
   updatePost: (parent, args, ctx, info) => {
     const { id, data } = args;
-
-    let postUpdated = ctx.posts.find(u => u.id === id);
+    const postUpdated = ctx.posts.find(u => u.id === id);
+    const originalPost = { ...postUpdated };
 
     if (!postUpdated) throw new Error('Post not found!');
 
     if (data.title) postUpdated.title = data.title;
     if (data.body) postUpdated.body = data.body;
-    if (data.published) postUpdated.published = data.published;
+    if (!!data.published) {
+      postUpdated.published = data.published;
+
+
+    }
 
     return postUpdated;
   },
@@ -110,14 +123,23 @@ const Mutation = {
 
     return userDeleted;
   },
-  deletePost: (parent, args, ctx, info) => {
-    const postIdx = ctx.posts.findIndex(c => c.id === args.id);
+  deletePost: (parent, args, { commnets, posts, pubsub }, info) => {
+    const postIdx = posts.findIndex(c => c.id === args.id);
     
     if (postIdx === -1) throw new Error('Not found');
 
-    const postDeleted = ctx.posts.splice(postIdx, 1)[0];
+    const [postDeleted] = posts.splice(postIdx, 1);
 
-    ctx.comments = ctx.comments.filter(comment => comment.post !== postDeleted.id);
+    ctx.comments = comments.filter(comment => comment.post !== postDeleted.id);
+
+    if (postDeleted.published) {
+      pubsub.publish('post', {
+        post: {
+          mutation: 'DELETED',
+          data: postDeleted,
+        }
+      });
+    }
 
     return postDeleted;
   },
