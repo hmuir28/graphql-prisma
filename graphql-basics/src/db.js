@@ -48,22 +48,22 @@ const comments = [{
   id: '1',
   text: 'This is my first comment...',
   author: '1',
-  post: '1',
+  post: '10',
 }, {
   id: '2',
   text: 'This is my second comment...',
   author: '1',
-  post: '1',
+  post: '11',
 }, {
   id: '3',
   text: 'This is my third comment...',
   author: '1',
-  post: '2',
+  post: '12',
 }, {
   id: '4',
   text: 'This is my fourth comment...',
   author: '2',
-  post: '3',
+  post: '10',
 }];
 
 const db = {

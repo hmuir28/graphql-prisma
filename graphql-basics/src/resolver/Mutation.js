@@ -11,7 +11,12 @@ const Mutation = {
     const comment = { id: uuidv4(), ...data };
 
     comments.push(comment);
-    pubsub.publish(`comment ${data.post}`, { comment });
+    pubsub.publish(`comment ${data.post}`, {
+      comment: {
+        mutation: 'CREATED',
+        data: comment,
+      },
+    });
     return comment;
   },
   createUser: (parent, args, ctx, info) => {
@@ -39,12 +44,14 @@ const Mutation = {
 
     posts.push(post);
 
-    if (post.published) pubsub.publish('post', {
-      post: {
-        mutation: 'CREATED',
-        data: post,
-      }
-    });
+    if (post.published) {
+      pubsub.publish('post', {
+        post: {
+          mutation: 'CREATED',
+          data: post,
+        },
+      });
+    }
 
     return post;
   },
@@ -76,31 +83,66 @@ const Mutation = {
 
     if (data.title) postUpdated.title = data.title;
     if (data.body) postUpdated.body = data.body;
-    if (!!data.published) {
+    if (typeof data.published === 'boolean') {
       postUpdated.published = data.published;
 
-
+      if (originalPost.published && !postUpdated.published) {
+        pubsub.publish('post', {
+          post: {
+            mutation: 'DELETED',
+            data: originalPost,
+          }
+        });
+      } else if (!originalPost.published && postUpdated.published) {
+        pubsub.publish('post', {
+          post: {
+            mutation: 'CREATED',
+            data: postUpdated,
+          }
+        });
+      }
+    }  else if (postUpdated.published) {
+      pubsub.publish('post', {
+        post: {
+          mutation: 'UPDATED',
+          data: postUpdated,
+        }
+      });
     }
 
     return postUpdated;
   },
-  updateComment: (parent, args, ctx, info) => {
+  updateComment: (parent, args, { comments, pubsub }, info) => {
     const { id, data } = args;
 
-    let commentUpdated = ctx.comments.find(u => u.id === id);
+    let commentUpdated = comments.find(u => u.id === id);
 
     if (!commentUpdated) throw new Error('Comment not found!');
 
     if (data.text) commentUpdated.text = data.text;
 
+    pubsub.publish(`comment ${commentUpdated.post}`, {
+      comment: {
+        mutation: 'UPDATED',
+        data: comment,
+      },
+    });
+
     return commentUpdated;
   },
-  deleteComment: (parent, args, ctx, info) => {
-    const commentIdx = ctx.comments.findIndex(c => c.id === args.id);
+  deleteComment: (parent, args, { comments, pubsub }, info) => {
+    const commentIdx = comments.findIndex(c => c.id === args.id);
     
     if (commentIdx === -1) throw new Error('Not found');
 
-    return ctx.comments.splice(commentIdx, 1)[0];
+    const [comment] = comments.splice(commentIdx, 1);
+    pubsub.publish(`comment ${comment.post}`, {
+      comment: {
+        mutation: 'DELETED',
+        data: comment,
+      },
+    });
+    return comment;
   },
   deleteUser: (parent, args, ctx, info) => {
     const userIdx = ctx.users.findIndex(c => c.id === args.id);

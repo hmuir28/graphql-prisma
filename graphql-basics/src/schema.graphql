@@ -19,7 +19,7 @@ type Mutation {
 }
 
 type Subscription {
-  comment(postId: String!): Comment!
+  comment(postId: String!): CommentSubscriptionPayload!
 }
 
 type Subscription {
@@ -84,6 +84,11 @@ type User {
   age: Int!
   posts: [Post!]!
   comments: [Comment!]!
+}
+
+type CommentSubscriptionPayload {
+  mutation: String!
+  data: Comment!
 }
 
 type PostSubscriptionPayload {
