@@ -1,5 +1,4 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga';
-import db from './db';
 import Query from './resolver/Query';
 import Mutation from './resolver/Mutation';
 import Comment from './resolver/Comment';
@@ -19,12 +18,11 @@ const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
   context: {
-    ...db,
     pubsub,
     prisma,
   }
 });
 
-server.start({ port: 7500 }, () => {
+server.start(() => {
   console.log(`It's up and running...`);
 })
