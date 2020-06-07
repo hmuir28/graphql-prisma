@@ -6,6 +6,7 @@ import Comment from './resolver/Comment';
 import Post from './resolver/Post';
 import User from './resolver/User';
 import Subscription from './resolver/Subscription';
+import prisma from './prisma';
 
 // Resolvers
 // hello within a Resolver is considered as an operation
@@ -20,9 +21,10 @@ const server = new GraphQLServer({
   context: {
     ...db,
     pubsub,
+    prisma,
   }
 });
 
-server.start(() => {
+server.start({ port: 7500 }, () => {
   console.log(`It's up and running...`);
 })

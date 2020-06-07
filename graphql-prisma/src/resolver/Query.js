@@ -1,30 +1,50 @@
 const Query = {
-  comments: (parent, args, ctx, info) => {
+  comments: (parent, args, { prisma }, info) => {
+    let query = {};
+
     if (args.query) {
-      return ctx.comments
-        .filter(comment =>
-          comment.text.toLowerCase().includes(args.query),
-        );
+      query = {
+        where: {
+          text_contains: args.query,
+        },
+      };
     }
-    return ctx.comments;
+
+    return prisma.query.comments(query, info);
   },
-  users: (parent, args, ctx, info) => {
+  users: (parent, args, { prisma }, info) => {
+    let query = {};
+
     if (args.query) {
-      return ctx.users
-        .filter(user =>
-          user.name.toLowerCase().includes(args.query) || user.email.toLowerCase().includes(args.query),
-        );
+      query = {
+        where: {
+          OR: [{
+            name_contains: args.query,
+          }, {
+            email_contains: args.query,
+          }],
+        },
+      };
     }
-    return ctx.users;
+
+    return prisma.query.users(query, info);
   },
-  posts: (parent, args, ctx, info) => {
+  posts: (parent, args, { prisma }, info) => {
+    let query = {};
+
     if (args.query) {
-      return ctx.posts
-        .filter(post =>
-          post.title.toLowerCase().includes(args.query) || post.body.toLowerCase().includes(args.query),
-        );
+      query = {
+        where: {
+          OR: [{
+            title_contains: args.query,
+          }, {
+            body_contains: args.query,
+          }],
+        },
+      };
     }
-    return ctx.posts;
+
+    return prisma.query.posts(query, info);
   },
   me: () => ({
     id: () => '1',
