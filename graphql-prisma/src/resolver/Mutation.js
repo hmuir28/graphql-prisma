@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 const Mutation = {
   createComment: async (parent, args, { prisma }, info) => {
     const { data } = args;
@@ -24,11 +26,17 @@ const Mutation = {
   },
   createUser: async (parent, args, { prisma }, info) => {
     const { data } = args;
-    const emailTaken = await prisma.exists.User({ email: data.email });
 
-    if (emailTaken) throw new Error('Email is already taken');
+    if (data.password.length < 8) throw new Error('Password must be 8 characters or longer.');
 
-    return prisma.mutation.createUser({ data }, info);
+    const password = await bcrypt.hash(data.password, 10);
+
+    return prisma.mutation.createUser({
+      data: {
+        ...data,
+        password,
+      }
+    }, info);
   },
   createPost: async (parent, args, { prisma }, info) => {
     const { data } = args;

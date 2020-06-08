@@ -30,6 +30,7 @@ input createUser {
   name: String!
   email: String!
   age: Int!
+  password: String!
 }
 
 input createPost {
@@ -81,6 +82,7 @@ type User {
   id: ID!
   name: String!
   email: String!
+  password: String!
   age: Int!
   posts: [Post!]!
   comments: [Comment!]!
