@@ -6,7 +6,7 @@ const Mutation = {
 
     if (!userExists || !postExists) throw new Error('Operation invalid!');
 
-    return prisma.mutation.Comment({
+    return prisma.mutation.createComment({
       data: {
         ...data,
         author: {
