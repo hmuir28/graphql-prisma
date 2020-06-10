@@ -1,7 +1,13 @@
 import jwt from 'jsonwebtoken';
 
 const getUserId = (request, requiredAuth = true) => {
-  const header = request.request.headers.authorization;
+  let header = {};
+
+  if (request.request.headers.authorization) {
+    header = request.request.headers.authorization;
+  } else {
+    header = request.connection.context.Authorization;
+  }
 
   if (header) {
     const [, token] = header.split(' ');
