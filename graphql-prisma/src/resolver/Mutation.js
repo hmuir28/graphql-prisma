@@ -23,9 +23,16 @@ const Mutation = {
       token: jwt.sign({ userId: user.id }, 'thisismysecretkey'),
     };
   },
-
   createComment: async (parent, args, { prisma, request }, info) => {
+    const { data } = args;
     const userId = getUserId(request);
+
+    const existPosts = await prisma.exists.Post({
+      id: data.post,
+      published: true,
+    });
+
+    if (!existPosts) throw new Error('Unable to create comment for the Post');
     
     return prisma.mutation.createComment({
       data: {
@@ -63,6 +70,7 @@ const Mutation = {
     };
   },
   createPost: async (parent, args, { prisma, request }, info) => {
+    const { data } = args;
     const id = getUserId(request);
 
     return prisma.mutation.Post({
@@ -92,6 +100,21 @@ const Mutation = {
     });
 
     if (!existPost) throw new Error('Unable to update Post.');
+
+    const isPublished = prisma.exists.Post({
+      id,
+      published: true,
+    });
+
+    if (isPublished && !data.published) {
+      await prisma.mutation.deleteManyComments({
+        where: {
+          post: {
+            id,
+          },
+        },
+      });
+    }
 
     return prisma.mutation.updatePost({ where: { id }, data }, info);
   },
@@ -133,7 +156,7 @@ const Mutation = {
     const { id } = args;
     const userId = getUserId(request);
 
-    const existPost = prisma.exists.Post({
+    const existPost = await prisma.exists.Post({
       id,
       author: {
         id: userId,
