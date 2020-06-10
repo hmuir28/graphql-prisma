@@ -1,16 +1,10 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga';
-import Query from './resolver/Query';
-import Mutation from './resolver/Mutation';
-import Comment from './resolver/Comment';
-import Post from './resolver/Post';
-import User from './resolver/User';
-import Subscription from './resolver/Subscription';
+import resolvers, { fragmentReplacements } from './resolver/index';
 import prisma from './prisma';
 
 // Resolvers
 // hello within a Resolver is considered as an operation
 // Parent, Arguments, Context and Info those are the parameters...
-const resolvers = { Query, Mutation, Subscription, Comment, Post, User };
 
 const pubsub = new PubSub();
 
@@ -21,7 +15,8 @@ const server = new GraphQLServer({
     pubsub,
     prisma,
     request,
-  })
+  }),
+  fragmentReplacements,
 });
 
 server.start(() => {
