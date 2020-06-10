@@ -11,11 +11,11 @@ type Mutation {
   createComment(data: createComment): Comment!
   createUser(data: createUser): AuthPayload!
   createPost(data: createPost): Post!
-  updateUser(id: ID!, data: updateUser): User!
+  updateUser(data: updateUser): User!
   updatePost(id: ID!, data: updatePost): Post!
   updateComment(id: ID, data: updateComment): Comment!
   deleteComment(id: ID!): Comment!
-  deleteUser(id: ID!): User!
+  deleteUser: User!
   deletePost(id: ID!): Post!
 }
 
@@ -48,12 +48,10 @@ input createPost {
   title: String!
   body: String!
   published: Boolean!
-  author: String!
 }
 
 input createComment {
   text: String!
-  author: String!
   post: String!
 }
 
