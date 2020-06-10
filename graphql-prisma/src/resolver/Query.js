@@ -12,7 +12,7 @@ const Query = {
       };
     }
 
-    return prisma.query.comments(query, info);
+    return prisma.query.Comment(query, info);
   },
   users: (parent, args, { prisma }, info) => {
     let query = {};
@@ -50,7 +50,7 @@ const Query = {
       }];
     }
 
-    return prisma.query.posts(query, info);
+    return prisma.query.Post(query, info);
   },
 
   posts: (parent, args, { prisma }, info) => {
@@ -68,7 +68,7 @@ const Query = {
       }];
     }
 
-    return prisma.query.posts(query, info);
+    return prisma.query.Post(query, info);
   },
   me: (parent, args, { prisma, request }, info) => {
     const userId = getUserId(request, false);
@@ -85,7 +85,7 @@ const Query = {
   post: (parent, args, { prisma, request }, info) => {
     const userId = getUserId(request, false);
 
-    const [post] = prisma.query.posts({
+    const [post] = prisma.query.Post({
       where: {
         id: args.id,
         OR: [{
