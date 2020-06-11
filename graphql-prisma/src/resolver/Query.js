@@ -15,7 +15,10 @@ const Query = {
     return prisma.query.Comment(query, info);
   },
   users: (parent, args, { prisma }, info) => {
-    let query = {};
+    let query = {
+      first: args.first,
+      skip: args.skip,
+    };
 
     if (args.query) {
       query = {
@@ -55,6 +58,8 @@ const Query = {
 
   posts: (parent, args, { prisma }, info) => {
     const query = {
+      first: args.first,
+      skip: args.skip,
       where: {
         published: true,
       },

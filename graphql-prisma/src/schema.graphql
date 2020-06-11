@@ -1,8 +1,8 @@
 type Query {
   comments(query: String): [Comment!]!
-  users(query: String): [User!]!
+  users(query: String, first: Int, skip: Int): [User!]!
   myPosts(query: String): [Post!]!
-  posts(query: String): [Post!]!
+  posts(query: String, first: Int, skip: Int): [Post!]!
   me: User!
   post(id: ID!): Post!
 }
