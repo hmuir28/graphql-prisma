@@ -2,7 +2,10 @@ import getUserId from '../utils/getUserId';
 
 const Query = {
   comments: (parent, args, { prisma }, info) => {
-    let query = {};
+    let query = {
+      first: args.first,
+      skip: args.skip,
+    };
 
     if (args.query) {
       query = {
@@ -38,6 +41,8 @@ const Query = {
   myPosts: (parent, args, { prisma, request }, info) => {
     const id = getUserId(request);
     const query = {
+      first: args.first,
+      skip: args.skip,
       where: {
         author: {
           id,
