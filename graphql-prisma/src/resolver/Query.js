@@ -5,6 +5,7 @@ const Query = {
     let query = {
       first: args.first,
       skip: args.skip,
+      orderBy: args.orderBy,
     };
 
     if (args.query) {
@@ -21,6 +22,7 @@ const Query = {
     let query = {
       first: args.first,
       skip: args.skip,
+      orderBy: args.orderBy,
     };
 
     if (args.query) {
@@ -43,6 +45,7 @@ const Query = {
     const query = {
       first: args.first,
       skip: args.skip,
+      orderBy: args.orderBy,
       where: {
         author: {
           id,
@@ -65,6 +68,7 @@ const Query = {
     const query = {
       first: args.first,
       skip: args.skip,
+      orderBy: args.orderBy,
       where: {
         published: true,
       },
