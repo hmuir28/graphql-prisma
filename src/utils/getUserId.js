@@ -11,7 +11,7 @@ const getUserId = (request, requiredAuth = true) => {
 
   if (header) {
     const [, token] = header.split(' ');
-    const { userId } = jwt.verify(token, 'thisismysecretkey');
+    const { userId } = jwt.verify(token, process.env.JWT_SECRET);
     return userId;
   }
 
