@@ -93,7 +93,7 @@ type Post {
 type User {
   id: ID!
   name: String!
-  email: String!
+  email: String
   password: String!
   age: Int!
   posts: [Post!]!
@@ -117,7 +117,6 @@ enum MutationType {
   UPDATED
   DELETED
 }
-
 
 enum UserOrderByInput {
   name_ASC

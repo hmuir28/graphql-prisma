@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import getUserId from '../utils/getUserId';
 import generateToken from '../utils/generateToken';
 import hashPassword from '../utils/hashPassword';
@@ -5,11 +6,11 @@ import hashPassword from '../utils/hashPassword';
 const Mutation = {
   login: async (parent, args, { prisma }, info) => {
     const { data } = args;
-    const user = await prisma.query.users({
+    const user = await prisma.query.user({
       where: {
-        email_contains: data.email,
+        email: data.email,
       }
-    }, info);
+    });
 
     if (!user) throw new Error('Unable to login.');
 
@@ -52,12 +53,12 @@ const Mutation = {
   createUser: async (parent, args, { prisma }, info) => {
     const { data } = args;
     const password = await hashPassword(data.password);
-    const user = prisma.mutation.createUser({
+    const user = await prisma.mutation.createUser({
       data: {
         ...data,
         password,
       }
-    }, info);
+    });
 
     return {
       user,
